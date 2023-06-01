@@ -1,0 +1,24 @@
+name: sgpt 2.7b gpt-neo
+debug: false
+environment:
+  environment_variables:
+    - NCCL_DEBUG=INFO
+    # You may need to modify this to match your network configuration.
+    #- NCCL_SOCKET_IFNAME=ens,eth,ib
+    - HUGGINGFACE_HUB_CACHE=/tmp
+bind_mounts:
+  - host_path: /tmp
+    container_path: /tmp
+resources:
+  slots_per_trial: 8
+  shm_size: 20000000000
+searcher:
+  name: single
+  max_length:
+    batches: 100
+  metric: eval_loss
+entrypoint: >-
+  python -m determined.launch.torch_distributed
+  python determined/train.py 
+  --model_name tiiuae/falcon-7b --train_batch_size 32 --eval_batch_size 16 --freezenonbias --specb --lr 4e-4 --pooling weightedmean --gradcache --chunksize 32
+max_restarts: 0
