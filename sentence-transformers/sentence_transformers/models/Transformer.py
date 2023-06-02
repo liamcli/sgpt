@@ -1,5 +1,5 @@
 from torch import nn
-from transformers import AutoModel, AutoTokenizer, AutoConfig
+from transformers import AutoModel, AutoModelForCausalLM, AutoTokenizer, AutoConfig
 import json
 from typing import List, Dict, Optional, Union, Tuple
 import os
@@ -35,7 +35,7 @@ class Transformer(nn.Module):
         self.do_lower_case = do_lower_case
 
         config = AutoConfig.from_pretrained(model_name_or_path, **model_args, cache_dir=cache_dir)
-        self.auto_model = AutoModel.from_pretrained(model_name_or_path, config=config, cache_dir=cache_dir, **auto_model_kwargs)
+        self.auto_model = AutoModelForCausalLM.from_pretrained(model_name_or_path, config=config, cache_dir=cache_dir, trust_remote_code=True, **auto_model_kwargs)
         self.tokenizer = AutoTokenizer.from_pretrained(tokenizer_name_or_path if tokenizer_name_or_path is not None else model_name_or_path, cache_dir=cache_dir, **tokenizer_args)
 
         #No max_seq_length set. Try to infer from model

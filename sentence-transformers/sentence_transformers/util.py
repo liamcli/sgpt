@@ -456,7 +456,6 @@ from typing import Dict, Optional, Union
 from pathlib import Path
 from huggingface_hub.constants import HUGGINGFACE_HUB_CACHE
 from huggingface_hub import HfApi, hf_hub_url, cached_download
-from huggingface_hub.snapshot_download import REPO_ID_SEPARATOR
 import fnmatch
 
 def snapshot_download(
@@ -476,6 +475,7 @@ def snapshot_download(
         cache_dir = HUGGINGFACE_HUB_CACHE
     if isinstance(cache_dir, Path):
         cache_dir = str(cache_dir)
+    print("cache_dir", cache_dir)
 
     _api = HfApi()
     model_info = _api.model_info(repo_id=repo_id, revision=revision)
@@ -514,8 +514,5 @@ def snapshot_download(
             library_version=library_version,
             user_agent=user_agent,
         )
-
-        if os.path.exists(path + ".lock"):
-            os.remove(path + ".lock")
 
     return storage_folder

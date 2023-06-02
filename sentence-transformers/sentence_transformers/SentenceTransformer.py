@@ -817,8 +817,8 @@ class SentenceTransformer(nn.Sequential):
                     
                     if log_wandb and accelerator.is_main_process:
                         wandb.log({"loss": loss_value})
-                    if det_context is not None:
-                        det_context.train.report_training_metrics(steps_completed=global_step, metrics={"loss": loss_value})
+                    if det_context is not None and accelerator.is_main_process:
+                        det_context.train.report_training_metrics(steps_completed=global_step, metrics={"loss": loss_value.detach().cpu().numpy()})
 
                 if evaluation_steps > 0 and global_step % evaluation_steps == 0:
                     self._eval_during_training(evaluator, output_path, save_best_model, epoch, global_step, callback,
@@ -880,7 +880,7 @@ class SentenceTransformer(nn.Sequential):
 
         if evaluator is not None:
             score = evaluator(self, output_path=eval_path, epoch=epoch, steps=steps)
-            if det_context is not None:
+            if det_context is not None and main_process:
                 det_context.report_validation_metrics(steps_completed=step, metrics={"eval_score": score})
             if callback is not None and main_process:
                 callback(score, epoch, steps)
