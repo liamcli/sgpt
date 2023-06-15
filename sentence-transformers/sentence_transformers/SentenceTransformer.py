@@ -417,7 +417,7 @@ class SentenceTransformer(nn.Sequential):
         for idx, name in enumerate(self._modules):
             module = self._modules[name]
             if idx == 0 and isinstance(module, Transformer):    #Save transformer model in the main folder
-                model_path = path + "/"
+                model_path = str(path) + "/"
             else:
                 model_path = os.path.join(path, str(idx)+"_"+type(module).__name__)
 
