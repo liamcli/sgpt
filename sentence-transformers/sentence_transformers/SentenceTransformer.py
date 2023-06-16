@@ -836,8 +836,7 @@ class SentenceTransformer(nn.Sequential):
                         and global_step % checkpoint_save_steps == 0 and accelerator.is_main_process:
                     if det_context is not None:
                         with det_context.checkpoint.store_path({"steps_completed": global_step}) as (checkpoint_path, uuid):
-                            self._save_checkpoint(checkpoint_path, checkpoint_save_total_limit, global_step)
-                            det_context.train.report_validation_metrics(steps_completed=global_step, {"eval_loss": 1.0})
+                            self._save_checkpoint(checkpoint_path, checkpoint_save_total_limit, global_step)                            
                     elif checkpoint_path is not None:
                         self._save_checkpoint(checkpoint_path, checkpoint_save_total_limit, global_step)
 
